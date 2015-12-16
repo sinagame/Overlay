@@ -94,7 +94,7 @@ public class KeepAliveService extends Service {
 				// Should not happen.
 			}
 		} else {
-			setForeground(true);
+//			setForeground(true);
 			try {
 				android.app.NotificationManager nm = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 				nm.notify(NotificationManager.PERSISTENT_NOTIFICATION_ID,
@@ -114,7 +114,7 @@ public class KeepAliveService extends Service {
 				// Should not happen.
 			}
 		} else {
-			setForeground(false);
+//			setForeground(false);
 		}
 	}
 

@@ -1,9 +1,5 @@
 package com.android.overlay.utils;
 
-import java.util.Locale;
-
-import org.apache.http.HttpHost;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -12,14 +8,12 @@ import android.net.Uri;
 
 import com.android.overlay.connection.ApnInfo;
 
+import org.apache.http.HttpHost;
+
+import java.util.Locale;
+
 public final class NetUtils {
 
-	/**
-	 * 获取客户端代理
-	 * 
-	 * @param context
-	 * @return
-	 */
 	public static HttpHost getCurrHttpProxy(Context context) {
 		HttpHost proxy = null;
 		try {
@@ -51,12 +45,6 @@ public final class NetUtils {
 		return proxy;
 	}
 
-	/**
-	 * 检查网络状态是否连通
-	 * 
-	 * @param context
-	 * @return
-	 */
 	public static boolean checkNetworkState(Context context) {
 		try {
 			ConnectivityManager connectivity = (ConnectivityManager) context
@@ -74,12 +62,6 @@ public final class NetUtils {
 		return false;
 	}
 
-	/**
-	 * 检查数据业务是否连通 Indicates whether mobile network connectivity is possible.
-	 * 
-	 * @param context
-	 * @return true if the mobile network is available, false otherwise
-	 */
 	public static boolean checkMobileState(Context context) {
 		try {
 			ConnectivityManager mgr = (ConnectivityManager) context
@@ -95,12 +77,6 @@ public final class NetUtils {
 		return false;
 	}
 
-	/**
-	 * 检查wifi业务是否连通
-	 * 
-	 * @param context
-	 * @return
-	 */
 	public static boolean checkWifiState(Context context) {
 		try {
 			ConnectivityManager connectManager = (ConnectivityManager) context
@@ -115,14 +91,6 @@ public final class NetUtils {
 		return false;
 	}
 
-	/**
-	 * 检查网络设备是否可用 Indicates whether network connectivity is possible, or it is
-	 * possible to establish connections and pass data.
-	 * 
-	 * @param context
-	 * @return true if network is available or connectivity exists, false
-	 *         otherwise.
-	 */
 	public static boolean isNetworkAvailable(Context context) {
 		if (isWifiAvailable(context) || isMobileAvailable(context)) {
 			return true;
@@ -131,12 +99,6 @@ public final class NetUtils {
 		}
 	}
 
-	/**
-	 * 检查wifi设备是否可用
-	 * 
-	 * @param context
-	 * @return
-	 */
 	public static boolean isWifiAvailable(Context context) {
 		try {
 			ConnectivityManager connectManager = (ConnectivityManager) context
@@ -152,12 +114,6 @@ public final class NetUtils {
 		return false;
 	}
 
-	/**
-	 * 检查数据设备是否可用
-	 * 
-	 * @param context
-	 * @return
-	 */
 	public static boolean isMobileAvailable(Context context) {
 		try {
 			ConnectivityManager connectManager = (ConnectivityManager) context
