@@ -32,6 +32,14 @@ public class RunningEnvironment extends Environment {
 		super.onCreate(application);
 	}
 
+	public void registerManagerClasses(Class[] cls) {
+		super.registerManagerClasses(cls);
+	}
+
+	public void run(Application application) {
+		super.run(application);
+	}
+
 	protected void onUnload() {
 		super.onUnload();
 	}

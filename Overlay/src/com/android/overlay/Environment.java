@@ -151,6 +151,20 @@ public class Environment {
 		}
 	}
 
+	public void registerManagerClasses(Class[] cls) {
+		try {
+			for (int i = 0; i < cls.length; i++) {
+				Class.forName(cls[i].getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void run(Application application) {
+		application.startService(KeepAliveService.createIntent(application));
+	}
+
 	public boolean isInitialized() {
 		return appInitialized;
 	}
