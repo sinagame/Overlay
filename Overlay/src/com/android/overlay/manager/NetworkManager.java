@@ -23,7 +23,6 @@ import com.android.overlay.utils.NetUtils;
 public class NetworkManager implements OnCloseListener, OnInitializedListener {
 
 	protected final NetworkInterfaceWatcher connectivityWatcher;
-	protected final ConnectivityManager connectivityManager;
 	protected NetworkState state;
 	protected ConnectionType type;
 
@@ -90,8 +89,6 @@ public class NetworkManager implements OnCloseListener, OnInitializedListener {
 		RunningEnvironment.getInstance().getApplicationContext()
 				.registerReceiver(connectivityWatcher, filter);
 
-		connectivityManager = (ConnectivityManager) application
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		state = NetworkState.unavailable;
 		type = null;
 		if (NetUtils.checkNetworkState(application)) {
