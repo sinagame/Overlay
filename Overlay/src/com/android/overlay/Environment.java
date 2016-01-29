@@ -169,6 +169,13 @@ public class Environment {
 		return appInitialized;
 	}
 
+	protected void onStart() {
+		Log.d("ENV", "onStart");
+		for (OnStartListener listener : getManagers(OnStartListener.class)) {
+			listener.onStart();
+		}
+	}
+
 	protected void onLoad() {
 		Log.d("ENV", "onLoad");
 		for (OnLoadListener listener : getManagers(OnLoadListener.class)) {
@@ -222,29 +229,35 @@ public class Environment {
 			return;
 		}
 		serviceStarted = true;
-		loadFuture = backgroundExecutor.submit(new Callable<Void>() {
+		runOnUiThread(new Runnable() {
 			@Override
-			public Void call() throws Exception {
-				try {
-					Log.d("ENV", "loadFuture onLoad");
-					onLoad();
-				} finally {
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								loadFuture.get();
-							} catch (InterruptedException e) {
-								throw new RuntimeException(e);
-							} catch (ExecutionException e) {
-								throw new RuntimeException(e);
-							}
-							Log.d("ENV", "loadFuture onInitialized");
-							onInitialized();
+			public void run() {
+				onStart();
+				loadFuture = backgroundExecutor.submit(new Callable<Void>() {
+					@Override
+					public Void call() throws Exception {
+						try {
+							Log.d("ENV", "loadFuture onLoad");
+							onLoad();
+						} finally {
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									try {
+										loadFuture.get();
+									} catch (InterruptedException e) {
+										throw new RuntimeException(e);
+									} catch (ExecutionException e) {
+										throw new RuntimeException(e);
+									}
+									Log.d("ENV", "loadFuture onInitialized");
+									onInitialized();
+								}
+							});
 						}
-					});
-				}
-				return null;
+						return null;
+					}
+				});
 			}
 		});
 	}
