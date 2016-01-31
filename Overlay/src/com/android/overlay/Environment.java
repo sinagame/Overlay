@@ -171,8 +171,41 @@ public class Environment {
 
 	protected void onStart() {
 		Log.d("ENV", "onStart");
-		for (OnStartListener listener : getManagers(OnStartListener.class)) {
-			listener.onStart();
+		startManagerSize = getManagers(OnStartListener.class).size();
+		if (startManagerSize > 0) {
+			for (OnStartListener listener : getManagers(OnStartListener.class)) {
+				new Thread(new OnStartRunnable(listener)).start();
+			}
+		} else {
+			onManagerStarted();
+		}
+	}
+
+	class OnStartRunnable implements Runnable {
+		OnStartListener listener;
+		public OnStartRunnable(OnStartListener listener) {
+			this.listener = listener;
+		}
+
+		@Override
+		public void run() {
+			try {
+				if (this.listener != null) {
+					this.listener.onStart();
+				}
+			} finally {
+				notifyManagerStarted();
+			}
+		}
+	}
+
+	int startManagerSize;
+	int runningManagerSize;
+
+	protected synchronized void notifyManagerStarted() {
+		runningManagerSize = runningManagerSize + 1;
+		if (runningManagerSize >= startManagerSize) {
+			onManagerStarted();
 		}
 	}
 
@@ -229,35 +262,34 @@ public class Environment {
 			return;
 		}
 		serviceStarted = true;
-		runOnUiThread(new Runnable() {
+		onStart();
+	}
+
+	public void onManagerStarted() {
+		Log.d("ENV", "onManagerStarted");
+		loadFuture = backgroundExecutor.submit(new Callable<Void>() {
 			@Override
-			public void run() {
-				onStart();
-				loadFuture = backgroundExecutor.submit(new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						try {
-							Log.d("ENV", "loadFuture onLoad");
-							onLoad();
-						} finally {
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									try {
-										loadFuture.get();
-									} catch (InterruptedException e) {
-										throw new RuntimeException(e);
-									} catch (ExecutionException e) {
-										throw new RuntimeException(e);
-									}
-									Log.d("ENV", "loadFuture onInitialized");
-									onInitialized();
-								}
-							});
+			public Void call() throws Exception {
+				try {
+					Log.d("ENV", "loadFuture onLoad");
+					onLoad();
+				} finally {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								loadFuture.get();
+							} catch (InterruptedException e) {
+								throw new RuntimeException(e);
+							} catch (ExecutionException e) {
+								throw new RuntimeException(e);
+							}
+							Log.d("ENV", "loadFuture onInitialized");
+							onInitialized();
 						}
-						return null;
-					}
-				});
+					});
+				}
+				return null;
 			}
 		});
 	}
